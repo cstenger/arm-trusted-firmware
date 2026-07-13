@@ -54,10 +54,21 @@ static void __dead2 sunxi_system_reset(void)
 {
 	gicv2_cpuif_disable();
 
+#ifdef SUNXI_WDOG_KEY
+	/*
+	 * Key-protected watchdog layout (H713/sun50iw12): CFG at +0x10,
+	 * MODE at +0x14, writes ignored without the 0x16aa key.
+	 */
+	/* Reset the whole system when the watchdog times out */
+	mmio_write_32(SUNXI_R_WDOG_BASE + 0x0010, SUNXI_WDOG_KEY | 1);
+	/* Enable the watchdog with the shortest timeout (0.5 seconds) */
+	mmio_write_32(SUNXI_R_WDOG_BASE + 0x0014, SUNXI_WDOG_KEY | 1);
+#else
 	/* Reset the whole system when the watchdog times out */
 	mmio_write_32(SUNXI_WDOG0_CFG_REG, 1);
 	/* Enable the watchdog with the shortest timeout (0.5 seconds) */
 	mmio_write_32(SUNXI_WDOG0_MODE_REG, (0 << 4) | 1);
+#endif
 	/* Wait for twice the watchdog timeout before panicking */
 	mdelay(1000);
 
