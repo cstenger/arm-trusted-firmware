@@ -42,6 +42,12 @@
 #define SUNXI_R_UART_BASE		0x07080000
 #define SUNXI_R_I2C_BASE		0x07081400
 #define SUNXI_R_RSB_BASE		0x07083000
+/*
+ * H713 uses the "ncat" register file with the non-per-cluster (else)
+ * cpu_on path: per-core control regs at CPUCFG 0x09010060 + n*4, per-core
+ * AArch64/enable at CPUSUBSYS 0x08100020 + n*4, RVBAR at 0x08100040 + n*8.
+ * This matches the stock BL31 cpu_on sequence exactly.
+ */
 #define SUNXI_CPUSUBSYS_BASE		0x08100000
 #define SUNXI_CPUCFG_BASE		0x09010000
 
